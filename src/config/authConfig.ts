@@ -22,7 +22,9 @@ export const authConfig: AuthOptions = {
       authorize: async (credentials) => {
         try {
           const response = await userLogin(credentials);
+
           const user = response.data;
+          console.log(user);
 
           if (user) {
             return {
@@ -43,4 +45,5 @@ export const authConfig: AuthOptions = {
   pages: {
     signIn: "/auth",
   },
+  debug: process.env.NODE_ENV === "development",
 };

@@ -13,11 +13,11 @@ export const UserLoginAction = async (user: LoginType) => {
       redirect: false,
       callbackUrl: "/profile",
     });
-
-    // if (response && !response.error) {
-    //   redirect("/profile");
-    // }
+    if (response?.error) {
+      throw new Error(`Error: ${response.status}`);
+    }
+    console.log(response?.status);
   } catch (error) {
-    console.log(error);
+    console.log("Error:", error);
   }
 };
