@@ -3,15 +3,16 @@ import React from "react";
 import { Session } from "next-auth";
 import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
 import { PropsWithChildren } from "react";
+import { ThemeProvider } from "next-themes";
 
-type SessionProviderProps = PropsWithChildren<{
+type ProvidersProps = PropsWithChildren<{
   session: Session | null;
 }>;
 
-export function SessionProvider(props: SessionProviderProps) {
+export function Providers(props: ProvidersProps) {
   return (
     <NextAuthSessionProvider session={props.session}>
-      {props.children}
+      <ThemeProvider attribute="class">{props.children}</ThemeProvider>
     </NextAuthSessionProvider>
   );
 }

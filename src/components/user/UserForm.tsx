@@ -27,6 +27,7 @@ export default function UserForm() {
 
   const onSubmit = async (data: LoginType) => {
     if (data) {
+      console.log(data);
       try {
         setError(null);
         setloading(true);

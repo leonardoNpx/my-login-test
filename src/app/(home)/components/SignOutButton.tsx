@@ -7,7 +7,7 @@ const SignOutButton = () => {
     <>
       <button
         onClick={() => signOut()}
-        className="bg-orange-600 px-8 text-white rounded-xl"
+        className="bg-orange-600 px-8 py-1 text-white rounded-xl dark:bg-orange-600"
       >
         Sair
       </button>

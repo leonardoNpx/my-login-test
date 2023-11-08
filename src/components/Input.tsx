@@ -1,6 +1,6 @@
 import { ForwardedRef, forwardRef } from "react";
 import { UseFormRegisterReturn, FieldError } from "react-hook-form";
-import  Error  from "@/components/Error";
+import Error from "@/components/Error";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -20,7 +20,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           type={type}
           id={id}
-          className={`block rounded-xl shadow-inner px-6 pt-6 pb-1 w-full text-md text-black bg-white appearance-none focus:outline-none focus:ring-0 peer ${
+          className={`block rounded-xl shadow-inner px-6 pt-6 pb-1 w-full text-md text-black bg-slate-50 appearance-none focus:outline-none focus:ring-0 peer ${
             hasError ? "invalid:border-b-1" : ""
           }`}
           placeholder=" "
