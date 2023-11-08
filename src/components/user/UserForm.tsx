@@ -1,23 +1,20 @@
 "use client";
 import { Input } from "@/components/Input";
 import Image from "next/image";
-import ImageTest from "../../public/pattern.png";
-import Aurora from "../../public/aurora2.png";
-import { useCallback, useState } from "react";
+import ImageTest from "../../../public/pattern.png";
+import Aurora from "../../../public/aurora2.png";
+import Error from "../Error";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserLoginAction } from "@/actions/userLoginAction";
 import { LoginType, loginSchema } from "@/schema/login";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
-export default function Home() {
-  const [variant, setVariant] = useState("login");
-
-  // const toggleVariant = useCallback(() => {
-  //   setVariant((currentVariant) =>
-  //     currentVariant === "login" ? "register" : "login"
-  //   );
-  // }, []);
+export default function UserForm() {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setloading] = useState<boolean>(false);
+  const router = useRouter();
 
   const {
     register,
@@ -29,26 +26,30 @@ export default function Home() {
   });
 
   const onSubmit = async (data: LoginType) => {
-    console.log(data);
     if (data) {
       try {
+        setError(null);
+        setloading(true);
         const response = await signIn("credentials", {
-          user: data,
+          email: data.email,
+          password: data.password,
           redirect: false,
-          callbackUrl: "/profile",
+          callbackUrl: "/",
         });
         if (response?.error) {
-          throw new Error(`Error: ${response.status}`);
+          setError("Email ou senha inválida");
+          reset();
+        } else {
+          router.push("/");
         }
-        console.log(response);
-      } catch (error) {
+      } catch (error: any) {
+        setError(error);
         console.log("Error:", error);
+      } finally {
+        setloading(false);
       }
     }
   };
-
-  const { data: session } = useSession();
-  console.log(session?.user?.email);
 
   return (
     <main className="">
@@ -98,18 +99,10 @@ export default function Home() {
                   type="submit"
                   className="bg-orange-600 py-3 text-white rounded-md w-full mt-10 hover:bg-orange-700 transition"
                 >
-                  Enviar
+                  {loading ? "Carregando..." : "Enviar"}
                 </button>
+                {error && <Error>{error}</Error>}
               </form>
-              <p className="text-neutral-500 mt-12">
-                {/*  */}
-                <span
-                  // onClick={toggleVariant}
-                  className="text-white ml-1 hover:underline cursor-pointer"
-                >
-                  {/* {variant === "login" ? "Create an account" : "Login"} */}
-                </span>
-              </p>
             </div>
           </div>
         </div>

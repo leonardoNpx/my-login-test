@@ -1,4 +1,4 @@
-import { Userprops } from "@/models/user";
+import { UserProps } from "@/models/user";
 import { userLogin } from "@/services/mainApi/login";
 import { AuthOptions } from "next-auth";
 
@@ -19,31 +19,66 @@ export const authConfig: AuthOptions = {
           type: "text",
         },
       },
-      authorize: async (credentials) => {
+      async authorize(credentials) {
         try {
-          const response = await userLogin(credentials);
+          if (!credentials) {
+            return null;
+          }
 
-          const user = response.data;
-          console.log(user);
+          const bodyContent = {
+            email: credentials?.email,
+            password: credentials?.password,
+          };
+
+          const response = await userLogin(bodyContent);
+
+          const user: UserProps = await response.data;
+
+          if (!user) {
+            throw new Error("Email does not exist");
+          }
 
           if (user) {
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-            };
+            return user;
           } else {
             return null;
           }
-        } catch (error) {
-          console.log(error);
+        } catch (error: any) {
+          console.log("Error", error);
           return null;
         }
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user;
+      }
+      return token;
+    },
+    async session({ token, session }) {
+      if ("user" in token && token.user) {
+        const user = token.user as UserProps;
+        session.user = {
+          ...session.user,
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.avatar,
+          role: user.role,
+          nickname: user.nickname,
+          refreshToken: user.refresh_token,
+        };
+      }
+      return session;
+    },
+  },
   pages: {
     signIn: "/auth",
   },
   debug: process.env.NODE_ENV === "development",
+  session: {
+    strategy: "jwt",
+  },
 };
